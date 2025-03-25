@@ -1,0 +1,11 @@
+services:
+  unrealircd:
+    build:
+      context: .
+    ports:
+      - "6667:6667"
+    volumes:
+      - unrealircd_conf:/home/ircd/unrealircd/conf
+
+volumes:
+  unrealircd_conf:
