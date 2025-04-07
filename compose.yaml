@@ -1,11 +1,24 @@
 services:
   unrealircd:
+    links:
+      - database
     build:
       context: .
     ports:
       - "6667:6667"
+      - "8000:8000"
     volumes:
       - unrealircd_conf:/home/ircd/unrealircd/conf
-
+  database:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: unreal_webpanel
+      MYSQL_USER: unreal
+      MYSQL_PASSWORD: unreal
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+    volumes:
+      - db:/var/lib/mysql
 volumes:
   unrealircd_conf:
+  db:

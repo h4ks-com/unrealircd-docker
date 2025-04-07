@@ -7,7 +7,7 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends \
    ca-certificates build-essential pkg-config gdb libssl-dev libpcre2-dev libargon2-dev libsodium-dev libc-ares-dev \
-   libcurl4-openssl-dev wget git nginx composer php php-fpm php-zip php-curl php-mbstring supervisor \
+   libcurl4-openssl-dev wget git nginx composer php php-fpm php-zip php-curl php-mbstring supervisor php-mysqli \
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /var/log/supervisor \
  && groupadd -r ircd && useradd -r -m -g ircd ircd
@@ -44,10 +44,12 @@ COPY --chown=ircd:ircd --from=build /home/ircd/unrealircd /home/ircd/unrealircd
 COPY --chown=ircd:ircd --from=build /home/ircd/webpanel /home/ircd/webpanel
 # COPY --chown=ircd:ircd conf/* /home/ircd/unrealircd/conf/
 COPY --chown=ircd:ircd nginx/* /home/ircd/nginx/
+COPY  /nginx/php-fpm.conf /etc/php/8.3/fpm/
 COPY --chown=ircd:ircd supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY --chown=ircd:ircd webpanel/config.php /home/ircd/webpanel/config/config.php
 
 # CMD ["/home/ircd/unrealircd/bin/unrealircd", "-F"]
 # CMD ["nginx", "-c", "/home/ircd/nginx/nginx.conf", "-g", "daemon off;"]
-CMD ["sleep", "infinity"]
+# CMD ["sleep", "infinity"]
 
-# CMD ["/usr/bin/supervisord", "-n"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
